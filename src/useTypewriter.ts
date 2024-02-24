@@ -36,7 +36,7 @@ const useTypewriter = ({
   useEffect(() => {
     const matrix = phrases.map((phrase) => {
       const separator = unit === "word" ? " " : "";
-      return phrase.split(separator).filter((c) => c !== " ");
+      return phrase.split(separator);
     });
     setPhraseMatrix(matrix);
   }, []);
@@ -54,7 +54,7 @@ const useTypewriter = ({
         ];
         const phrase = phraseMatrix[curPhraseTyping.matrixPos[0]]
           .filter((_, idx) => idx < matrixPos[1])
-          .join(" ");
+          .join(unit === "word" ? " " : "");
         return {
           phrase,
           matrixPos,

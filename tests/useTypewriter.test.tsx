@@ -19,7 +19,7 @@ test("empty phrases", () => {
   expect(phrase).toBe("");
 });
 
-test("one phrase with default options", async () => {
+test("one phrase with default (unit = word) options", async () => {
   jest.useFakeTimers();
 
   const { result } = renderHook(() =>
@@ -45,6 +45,46 @@ test("one phrase with default options", async () => {
   for (const er of expectedResults) {
     act(() => {
       jest.advanceTimersByTime(500);
+    });
+    await waitFor(() => expect(result.current.phrase).toBe(er));
+  }
+});
+
+test("one phrase with character unit", async () => {
+  jest.useFakeTimers();
+
+  const { result } = renderHook(() =>
+    useTypewriter({
+      phrases: ["Stanley stands "],
+      options: {
+        unit: "character",
+        speed: {
+          numberOfUnits: 2,
+          timeDelayMs: 200,
+        },
+        eraseAtOnce: true,
+      },
+    })
+  );
+
+  act(() => {
+    result.current.start();
+  });
+
+  const expectedResults = [
+    "St",
+    "Stan",
+    "Stanle",
+    "Stanley ",
+    "Stanley st",
+    "Stanley stan",
+    "Stanley stands",
+    "Stanley stands ",
+  ];
+
+  for (const er of expectedResults) {
+    act(() => {
+      jest.advanceTimersByTime(200);
     });
     await waitFor(() => expect(result.current.phrase).toBe(er));
   }
