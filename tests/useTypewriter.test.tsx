@@ -200,3 +200,91 @@ test("multiple phrases looping", async () => {
     await waitFor(() => expect(result.current.phrase).toBe(er));
   }
 });
+
+test("unit = word, eraseAtOnce = false", async () => {
+  jest.useFakeTimers();
+
+  const { result } = renderHook(() =>
+    useTypewriter({
+      phrases: ["Ke dil haare, pukaare", "Mann ja re, mana le"],
+      options: {
+        unit: "word",
+        speed: {
+          numberOfUnits: 2,
+          timeDelayMs: 100,
+        },
+        eraseAtOnce: false,
+      },
+    })
+  );
+
+  act(() => {
+    result.current.start();
+  });
+
+  const expectedResults = [
+    "Ke dil",
+    "Ke dil haare, pukaare",
+    "Ke dil",
+    "",
+    "Mann ja",
+    "Mann ja re, mana",
+    "Mann ja re, mana le",
+    "Mann ja re, mana",
+    "Mann ja",
+    "",
+    "Ke dil",
+  ];
+
+  for (const er of expectedResults) {
+    act(() => {
+      jest.advanceTimersByTime(100);
+    });
+    await waitFor(() => expect(result.current.phrase).toBe(er));
+  }
+});
+
+test("unit = character, eraseAtOnce = false", async () => {
+  jest.useFakeTimers();
+
+  const { result } = renderHook(() =>
+    useTypewriter({
+      phrases: ["Ke dil haare, pukaare", "Mann ja re, mana le"],
+      options: {
+        unit: "character",
+        speed: {
+          numberOfUnits: 7,
+          timeDelayMs: 100,
+        },
+        eraseAtOnce: false,
+      },
+    })
+  );
+
+  act(() => {
+    result.current.start();
+  });
+
+  const expectedResults = [
+    "Ke dil ",
+    "Ke dil haare, ",
+    "Ke dil haare, pukaare",
+    "Ke dil haare, ",
+    "Ke dil ",
+    "",
+    "Mann ja",
+    "Mann ja re, ma",
+    "Mann ja re, mana le",
+    "Mann ja re, ma",
+    "Mann ja",
+    "",
+    "Ke dil ",
+  ];
+
+  for (const er of expectedResults) {
+    act(() => {
+      jest.advanceTimersByTime(100);
+    });
+    await waitFor(() => expect(result.current.phrase).toBe(er));
+  }
+});

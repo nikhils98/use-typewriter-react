@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 interface PhraseTyping {
   phrase: string;
   matrixPos: number[];
+  isErasing: boolean;
 }
 
 interface Options {
@@ -31,6 +32,7 @@ const useTypewriter = ({
   const [phraseTyping, setPhraseTyping] = useState<PhraseTyping>({
     phrase: "",
     matrixPos: [0, 0],
+    isErasing: false,
   });
 
   useEffect(() => {
@@ -49,29 +51,42 @@ const useTypewriter = ({
     setInterval(() => {
       setPhraseTyping((curPhraseTyping) => {
         let matrixPos = [
-          (curPhraseTyping.matrixPos[0] + 1) % phraseMatrix.length,
-          speed.numberOfUnits,
+          curPhraseTyping.matrixPos[0],
+          curPhraseTyping.matrixPos[1] + speed.numberOfUnits,
         ];
+        let isErasing = curPhraseTyping.isErasing;
 
         if (
-          curPhraseTyping.matrixPos[1] <
-          phraseMatrix[curPhraseTyping.matrixPos[0]].length
+          curPhraseTyping.isErasing ||
+          curPhraseTyping.matrixPos[1] >=
+            phraseMatrix[curPhraseTyping.matrixPos[0]].length
         ) {
-          matrixPos = [
-            curPhraseTyping.matrixPos[0],
-            curPhraseTyping.matrixPos[1] + speed.numberOfUnits,
-          ];
+          if (curPhraseTyping.isErasing === false) {
+            isErasing = true;
+          }
+
+          if (curPhraseTyping.matrixPos[1] <= 0) {
+            matrixPos = [
+              (curPhraseTyping.matrixPos[0] + 1) % phraseMatrix.length,
+              speed.numberOfUnits,
+            ];
+            isErasing = false;
+          } else {
+            matrixPos = [
+              curPhraseTyping.matrixPos[0],
+              curPhraseTyping.matrixPos[1] - speed.numberOfUnits,
+            ];
+          }
         }
 
         const phrase = phraseMatrix[matrixPos[0]]
           .filter((_, idx) => idx < matrixPos[1])
           .join(unit === "word" ? " " : "");
 
-        console.log(phrase);
-
         return {
           phrase,
           matrixPos,
+          isErasing,
         };
       });
     }, speed.timeDelayMs);
