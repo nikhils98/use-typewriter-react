@@ -61,21 +61,28 @@ const useTypewriter = ({
           curPhraseTyping.matrixPos[1] >=
             phraseMatrix[curPhraseTyping.matrixPos[0]].length
         ) {
-          if (curPhraseTyping.isErasing === false) {
-            isErasing = true;
-          }
-
-          if (curPhraseTyping.matrixPos[1] <= 0) {
+          if (eraseAtOnce) {
             matrixPos = [
               (curPhraseTyping.matrixPos[0] + 1) % phraseMatrix.length,
               speed.numberOfUnits,
             ];
-            isErasing = false;
           } else {
-            matrixPos = [
-              curPhraseTyping.matrixPos[0],
-              curPhraseTyping.matrixPos[1] - speed.numberOfUnits,
-            ];
+            if (curPhraseTyping.isErasing === false) {
+              isErasing = true;
+            }
+
+            if (curPhraseTyping.matrixPos[1] <= 0) {
+              matrixPos = [
+                (curPhraseTyping.matrixPos[0] + 1) % phraseMatrix.length,
+                speed.numberOfUnits,
+              ];
+              isErasing = false;
+            } else {
+              matrixPos = [
+                curPhraseTyping.matrixPos[0],
+                curPhraseTyping.matrixPos[1] - speed.numberOfUnits,
+              ];
+            }
           }
         }
 

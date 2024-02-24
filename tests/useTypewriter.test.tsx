@@ -1,4 +1,4 @@
-import { renderHook, act, waitFor } from "@testing-library/react";
+import { renderHook, act } from "@testing-library/react";
 import useTypewriter from "../src/useTypewriter";
 
 test("empty phrases", () => {
@@ -46,7 +46,7 @@ test("one phrase with default (unit = word) options", async () => {
     act(() => {
       jest.advanceTimersByTime(500);
     });
-    await waitFor(() => expect(result.current.phrase).toBe(er));
+    expect(result.current.phrase).toBe(er);
   }
 });
 
@@ -86,7 +86,7 @@ test("one phrase with character unit", async () => {
     act(() => {
       jest.advanceTimersByTime(200);
     });
-    await waitFor(() => expect(result.current.phrase).toBe(er));
+    expect(result.current.phrase).toBe(er);
   }
 });
 
@@ -124,7 +124,7 @@ test("multiple phrases with word unit", async () => {
     act(() => {
       jest.advanceTimersByTime(100);
     });
-    await waitFor(() => expect(result.current.phrase).toBe(er));
+    expect(result.current.phrase).toBe(er);
   }
 });
 
@@ -155,7 +155,7 @@ test("multiple phrases with characters unit", async () => {
     act(() => {
       jest.advanceTimersByTime(100);
     });
-    await waitFor(() => expect(result.current.phrase).toBe(er));
+    expect(result.current.phrase).toBe(er);
   }
 });
 
@@ -197,7 +197,7 @@ test("multiple phrases looping", async () => {
     act(() => {
       jest.advanceTimersByTime(100);
     });
-    await waitFor(() => expect(result.current.phrase).toBe(er));
+    expect(result.current.phrase).toBe(er);
   }
 });
 
@@ -240,7 +240,7 @@ test("unit = word, eraseAtOnce = false", async () => {
     act(() => {
       jest.advanceTimersByTime(100);
     });
-    await waitFor(() => expect(result.current.phrase).toBe(er));
+    expect(result.current.phrase).toBe(er);
   }
 });
 
@@ -285,6 +285,6 @@ test("unit = character, eraseAtOnce = false", async () => {
     act(() => {
       jest.advanceTimersByTime(100);
     });
-    await waitFor(() => expect(result.current.phrase).toBe(er));
+    expect(result.current.phrase).toBe(er);
   }
 });
