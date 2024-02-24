@@ -48,13 +48,27 @@ const useTypewriter = ({
 
     setInterval(() => {
       setPhraseTyping((curPhraseTyping) => {
-        const matrixPos = [
-          0,
-          curPhraseTyping.matrixPos[1] + speed.numberOfUnits,
+        let matrixPos = [
+          (curPhraseTyping.matrixPos[0] + 1) % phraseMatrix.length,
+          speed.numberOfUnits,
         ];
-        const phrase = phraseMatrix[curPhraseTyping.matrixPos[0]]
+
+        if (
+          curPhraseTyping.matrixPos[1] <
+          phraseMatrix[curPhraseTyping.matrixPos[0]].length
+        ) {
+          matrixPos = [
+            curPhraseTyping.matrixPos[0],
+            curPhraseTyping.matrixPos[1] + speed.numberOfUnits,
+          ];
+        }
+
+        const phrase = phraseMatrix[matrixPos[0]]
           .filter((_, idx) => idx < matrixPos[1])
           .join(unit === "word" ? " " : "");
+
+        console.log(phrase);
+
         return {
           phrase,
           matrixPos,

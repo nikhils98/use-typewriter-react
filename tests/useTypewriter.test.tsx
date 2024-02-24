@@ -89,3 +89,114 @@ test("one phrase with character unit", async () => {
     await waitFor(() => expect(result.current.phrase).toBe(er));
   }
 });
+
+test("multiple phrases with word unit", async () => {
+  jest.useFakeTimers();
+
+  const { result } = renderHook(() =>
+    useTypewriter({
+      phrases: ["What came first?", "Chicken?", "Or", "Egg?"],
+      options: {
+        unit: "word",
+        speed: {
+          numberOfUnits: 1,
+          timeDelayMs: 100,
+        },
+        eraseAtOnce: true,
+      },
+    })
+  );
+
+  act(() => {
+    result.current.start();
+  });
+
+  const expectedResults = [
+    "What",
+    "What came",
+    "What came first?",
+    "Chicken?",
+    "Or",
+    "Egg?",
+  ];
+
+  for (const er of expectedResults) {
+    act(() => {
+      jest.advanceTimersByTime(100);
+    });
+    await waitFor(() => expect(result.current.phrase).toBe(er));
+  }
+});
+
+test("multiple phrases with characters unit", async () => {
+  jest.useFakeTimers();
+
+  const { result } = renderHook(() =>
+    useTypewriter({
+      phrases: ["Chicken?", "Or", "Egg?"],
+      options: {
+        unit: "character",
+        speed: {
+          numberOfUnits: 3,
+          timeDelayMs: 100,
+        },
+        eraseAtOnce: true,
+      },
+    })
+  );
+
+  act(() => {
+    result.current.start();
+  });
+
+  const expectedResults = ["Chi", "Chicke", "Chicken?", "Or", "Egg", "Egg?"];
+
+  for (const er of expectedResults) {
+    act(() => {
+      jest.advanceTimersByTime(100);
+    });
+    await waitFor(() => expect(result.current.phrase).toBe(er));
+  }
+});
+
+test("multiple phrases looping", async () => {
+  jest.useFakeTimers();
+
+  const { result } = renderHook(() =>
+    useTypewriter({
+      phrases: ["Chicken?", "Or", "Egg?", "Or"],
+      options: {
+        unit: "character",
+        speed: {
+          numberOfUnits: 3,
+          timeDelayMs: 100,
+        },
+        eraseAtOnce: true,
+      },
+    })
+  );
+
+  act(() => {
+    result.current.start();
+  });
+
+  const expectedResults = [
+    "Chi",
+    "Chicke",
+    "Chicken?",
+    "Or",
+    "Egg",
+    "Egg?",
+    "Or",
+    "Chi",
+    "Chicke",
+    "Chicken?",
+  ];
+
+  for (const er of expectedResults) {
+    act(() => {
+      jest.advanceTimersByTime(100);
+    });
+    await waitFor(() => expect(result.current.phrase).toBe(er));
+  }
+});
