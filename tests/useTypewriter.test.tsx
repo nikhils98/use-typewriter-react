@@ -1,26 +1,31 @@
 import { renderHook, act } from "@testing-library/react";
 import useTypewriter from "../src/useTypewriter";
 
-test("empty phrases", () => {
-  const {
-    result: {
-      current: { phrase, start },
-    },
-  } = renderHook(() =>
+beforeAll(() => {
+  jest.useFakeTimers();
+});
+
+afterAll(() => {
+  jest.useRealTimers();
+  jest.clearAllTimers();
+});
+
+test("empty phrases list returns empty string phrase", () => {
+  const { result } = renderHook(() =>
     useTypewriter({
       phrases: [],
     })
   );
 
   act(() => {
-    start();
+    result.current.start();
   });
 
-  expect(phrase).toBe("");
+  expect(result.current.phrase).toBe("");
 });
 
-test("one phrase with default (unit = word) options", async () => {
-  jest.useFakeTimers();
+test("one phrase with default options (unit = word) returns sequence increasing by a word", () => {
+  const timeDelayMs = 500; //default options
 
   const { result } = renderHook(() =>
     useTypewriter({
@@ -42,16 +47,11 @@ test("one phrase with default (unit = word) options", async () => {
     "Stanley stands sadly on the steep steps",
   ];
 
-  for (const er of expectedResults) {
-    act(() => {
-      jest.advanceTimersByTime(500);
-    });
-    expect(result.current.phrase).toBe(er);
-  }
+  validateResultsByAdvancingTimer(result, expectedResults, timeDelayMs);
 });
 
-test("one phrase with character unit", async () => {
-  jest.useFakeTimers();
+test("one phrase with character unit and speed 2 returns sequence increasing by 2 chars", () => {
+  const timeDelayMs = 200;
 
   const { result } = renderHook(() =>
     useTypewriter({
@@ -60,7 +60,7 @@ test("one phrase with character unit", async () => {
         unit: "character",
         speed: {
           numberOfUnits: 2,
-          timeDelayMs: 200,
+          timeDelayMs,
         },
         eraseAtOnce: true,
       },
@@ -82,16 +82,11 @@ test("one phrase with character unit", async () => {
     "Stanley stands ",
   ];
 
-  for (const er of expectedResults) {
-    act(() => {
-      jest.advanceTimersByTime(200);
-    });
-    expect(result.current.phrase).toBe(er);
-  }
+  validateResultsByAdvancingTimer(result, expectedResults, timeDelayMs);
 });
 
-test("multiple phrases with word unit", async () => {
-  jest.useFakeTimers();
+test("multiple phrases with word unit returns each phrase one after the other", () => {
+  const timeDelayMs = 100;
 
   const { result } = renderHook(() =>
     useTypewriter({
@@ -100,7 +95,7 @@ test("multiple phrases with word unit", async () => {
         unit: "word",
         speed: {
           numberOfUnits: 1,
-          timeDelayMs: 100,
+          timeDelayMs,
         },
         eraseAtOnce: true,
       },
@@ -120,16 +115,11 @@ test("multiple phrases with word unit", async () => {
     "Egg?",
   ];
 
-  for (const er of expectedResults) {
-    act(() => {
-      jest.advanceTimersByTime(100);
-    });
-    expect(result.current.phrase).toBe(er);
-  }
+  validateResultsByAdvancingTimer(result, expectedResults, timeDelayMs);
 });
 
-test("multiple phrases with characters unit", async () => {
-  jest.useFakeTimers();
+test("multiple phrases with characters unit returns each phrase one after the other", () => {
+  const timeDelayMs = 100;
 
   const { result } = renderHook(() =>
     useTypewriter({
@@ -138,7 +128,7 @@ test("multiple phrases with characters unit", async () => {
         unit: "character",
         speed: {
           numberOfUnits: 3,
-          timeDelayMs: 100,
+          timeDelayMs,
         },
         eraseAtOnce: true,
       },
@@ -151,16 +141,11 @@ test("multiple phrases with characters unit", async () => {
 
   const expectedResults = ["Chi", "Chicke", "Chicken?", "Or", "Egg", "Egg?"];
 
-  for (const er of expectedResults) {
-    act(() => {
-      jest.advanceTimersByTime(100);
-    });
-    expect(result.current.phrase).toBe(er);
-  }
+  validateResultsByAdvancingTimer(result, expectedResults, timeDelayMs);
 });
 
-test("multiple phrases looping", async () => {
-  jest.useFakeTimers();
+test("multiple phrases return phrases looping once last phrase has completed", () => {
+  const timeDelayMs = 100;
 
   const { result } = renderHook(() =>
     useTypewriter({
@@ -169,7 +154,7 @@ test("multiple phrases looping", async () => {
         unit: "character",
         speed: {
           numberOfUnits: 3,
-          timeDelayMs: 100,
+          timeDelayMs,
         },
         eraseAtOnce: true,
       },
@@ -193,16 +178,11 @@ test("multiple phrases looping", async () => {
     "Chicken?",
   ];
 
-  for (const er of expectedResults) {
-    act(() => {
-      jest.advanceTimersByTime(100);
-    });
-    expect(result.current.phrase).toBe(er);
-  }
+  validateResultsByAdvancingTimer(result, expectedResults, timeDelayMs);
 });
 
-test("unit = word, eraseAtOnce = false", async () => {
-  jest.useFakeTimers();
+test("setting eraseAtOnce to false with unit word tracks backward in the current phrase before returning the next", () => {
+  const timeDelayMs = 100;
 
   const { result } = renderHook(() =>
     useTypewriter({
@@ -211,7 +191,7 @@ test("unit = word, eraseAtOnce = false", async () => {
         unit: "word",
         speed: {
           numberOfUnits: 2,
-          timeDelayMs: 100,
+          timeDelayMs,
         },
         eraseAtOnce: false,
       },
@@ -236,16 +216,11 @@ test("unit = word, eraseAtOnce = false", async () => {
     "Ke dil",
   ];
 
-  for (const er of expectedResults) {
-    act(() => {
-      jest.advanceTimersByTime(100);
-    });
-    expect(result.current.phrase).toBe(er);
-  }
+  validateResultsByAdvancingTimer(result, expectedResults, timeDelayMs);
 });
 
-test("unit = character, eraseAtOnce = false", async () => {
-  jest.useFakeTimers();
+test("setting eraseAtOnce to false with unit character tracks backward in the current phrase before returning the next", () => {
+  const timeDelayMs = 100;
 
   const { result } = renderHook(() =>
     useTypewriter({
@@ -254,7 +229,7 @@ test("unit = character, eraseAtOnce = false", async () => {
         unit: "character",
         speed: {
           numberOfUnits: 7,
-          timeDelayMs: 100,
+          timeDelayMs,
         },
         eraseAtOnce: false,
       },
@@ -281,16 +256,11 @@ test("unit = character, eraseAtOnce = false", async () => {
     "Ke dil ",
   ];
 
-  for (const er of expectedResults) {
-    act(() => {
-      jest.advanceTimersByTime(100);
-    });
-    expect(result.current.phrase).toBe(er);
-  }
+  validateResultsByAdvancingTimer(result, expectedResults, timeDelayMs);
 });
 
-test("stop typing", async () => {
-  jest.useFakeTimers();
+test("calling stop function clears the interval and stops typing", () => {
+  const timeDelayMs = 100;
 
   const { result } = renderHook(() =>
     useTypewriter({
@@ -299,7 +269,7 @@ test("stop typing", async () => {
         unit: "word",
         speed: {
           numberOfUnits: 1,
-          timeDelayMs: 100,
+          timeDelayMs,
         },
         eraseAtOnce: false,
       },
@@ -314,16 +284,11 @@ test("stop typing", async () => {
 
   const expectedResults = ["Pale", "Pale blue", "Pale blue dot", "Pale blue"];
 
-  for (const er of expectedResults) {
-    act(() => {
-      jest.advanceTimersByTime(100);
-    });
-    expect(result.current.phrase).toBe(er);
-  }
+  validateResultsByAdvancingTimer(result, expectedResults, timeDelayMs);
 
   act(() => {
     stopFn();
-    jest.advanceTimersByTime(100);
+    jest.advanceTimersByTime(timeDelayMs);
   });
 
   expect(result.current.phrase).toBe(
@@ -331,8 +296,8 @@ test("stop typing", async () => {
   );
 });
 
-test("restart typing", async () => {
-  jest.useFakeTimers();
+test("calling start after stop restarts the typing from where it was stopped", () => {
+  const timeDelayMs = 100;
 
   const { result } = renderHook(() =>
     useTypewriter({
@@ -341,7 +306,7 @@ test("restart typing", async () => {
         unit: "word",
         speed: {
           numberOfUnits: 1,
-          timeDelayMs: 100,
+          timeDelayMs,
         },
         eraseAtOnce: false,
       },
@@ -356,19 +321,27 @@ test("restart typing", async () => {
 
   const expectedResults = ["Pale", "Pale blue", "Pale blue dot"];
 
-  for (const er of expectedResults) {
-    act(() => {
-      jest.advanceTimersByTime(100);
-    });
-    expect(result.current.phrase).toBe(er);
-  }
+  validateResultsByAdvancingTimer(result, expectedResults, timeDelayMs);
 
   act(() => {
     stopFn();
-    jest.advanceTimersByTime(100);
+    jest.advanceTimersByTime(timeDelayMs);
     ({ stop: stopFn } = result.current.start());
-    jest.advanceTimersByTime(100);
+    jest.advanceTimersByTime(timeDelayMs);
   });
 
   expect(result.current.phrase).toBe("Pale blue");
 });
+
+function validateResultsByAdvancingTimer(
+  resultRef: { current: { phrase: string } },
+  expectedResults: string[],
+  timeDelayMs: number
+) {
+  for (const er of expectedResults) {
+    act(() => {
+      jest.advanceTimersByTime(timeDelayMs);
+    });
+    expect(resultRef.current.phrase).toBe(er);
+  }
+}
