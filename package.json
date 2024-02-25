@@ -1,15 +1,23 @@
 {
-  "name": "use-typewriter",
+  "name": "use-typewriter-react",
   "version": "1.0.0",
   "description": "",
   "main": "dist/useMyHook.js",
   "types": "dist/useMyHook.d.ts",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "npx tsc",
+    "prepublishOnly": "npm test && npm run build"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": {
+    "name": "long_hair_programmer",
+    "email": "nikhil.satiani@gmail.com"
+  },
+  "license": "MIT",
+  "files": [
+    "dist/"
+  ],
   "dependencies": {
     "react": "^18.2.0"
   },
