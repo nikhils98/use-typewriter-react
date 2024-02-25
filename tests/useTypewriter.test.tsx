@@ -288,3 +288,87 @@ test("unit = character, eraseAtOnce = false", async () => {
     expect(result.current.phrase).toBe(er);
   }
 });
+
+test("stop typing", async () => {
+  jest.useFakeTimers();
+
+  const { result } = renderHook(() =>
+    useTypewriter({
+      phrases: ["Pale blue dot"],
+      options: {
+        unit: "word",
+        speed: {
+          numberOfUnits: 1,
+          timeDelayMs: 100,
+        },
+        eraseAtOnce: false,
+      },
+    })
+  );
+
+  let stopFn = () => {};
+
+  act(() => {
+    ({ stop: stopFn } = result.current.start());
+  });
+
+  const expectedResults = ["Pale", "Pale blue", "Pale blue dot", "Pale blue"];
+
+  for (const er of expectedResults) {
+    act(() => {
+      jest.advanceTimersByTime(100);
+    });
+    expect(result.current.phrase).toBe(er);
+  }
+
+  act(() => {
+    stopFn();
+    jest.advanceTimersByTime(100);
+  });
+
+  expect(result.current.phrase).toBe(
+    expectedResults[expectedResults.length - 1]
+  );
+});
+
+test("restart typing", async () => {
+  jest.useFakeTimers();
+
+  const { result } = renderHook(() =>
+    useTypewriter({
+      phrases: ["Pale blue dot"],
+      options: {
+        unit: "word",
+        speed: {
+          numberOfUnits: 1,
+          timeDelayMs: 100,
+        },
+        eraseAtOnce: false,
+      },
+    })
+  );
+
+  let stopFn = () => {};
+
+  act(() => {
+    ({ stop: stopFn } = result.current.start());
+  });
+
+  const expectedResults = ["Pale", "Pale blue", "Pale blue dot"];
+
+  for (const er of expectedResults) {
+    act(() => {
+      jest.advanceTimersByTime(100);
+    });
+    expect(result.current.phrase).toBe(er);
+  }
+
+  act(() => {
+    stopFn();
+    jest.advanceTimersByTime(100);
+    ({ stop: stopFn } = result.current.start());
+    jest.advanceTimersByTime(100);
+  });
+
+  expect(result.current.phrase).toBe("Pale blue");
+});

@@ -45,10 +45,10 @@ const useTypewriter = ({
 
   const start = () => {
     if (!phrases.length) {
-      return;
+      return { stop: () => {} };
     }
 
-    setInterval(() => {
+    const intervalId = setInterval(() => {
       setPhraseTyping((curPhraseTyping) => {
         let matrixPos = [
           curPhraseTyping.matrixPos[0],
@@ -97,6 +97,12 @@ const useTypewriter = ({
         };
       });
     }, speed.timeDelayMs);
+
+    return {
+      stop: () => {
+        clearInterval(intervalId);
+      },
+    };
   };
 
   return { phrase: phraseTyping.phrase, start };
