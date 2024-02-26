@@ -1,18 +1,15 @@
 {
   "compilerOptions": {
     "target": "ES6",
-    "module": "CommonJS",
-    "lib": ["dom", "dom.iterable", "ES6"],
+    "module": "ESNext",
     "jsx": "react",
     "strict": true,
-    "moduleResolution": "Node10",
+    "moduleResolution": "Node",
     "outDir": "./dist",
     "declaration": true,
     "sourceMap": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "tests"]
+  "include": ["src/**/*"]
 }
