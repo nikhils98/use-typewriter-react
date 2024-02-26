@@ -1,3 +1,4 @@
 import useTypewriter from "./useTypewriter";
+import { Typewriter } from "./typewriter";
 
-export default useTypewriter;
+export { useTypewriter, Typewriter };
