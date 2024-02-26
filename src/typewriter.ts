@@ -1,6 +1,7 @@
 export interface Typewriter {
   typingSpeed: Speed;
   erasingSpeed: Speed;
+  loopLimit?: number;
 }
 
 interface Speed {
@@ -13,18 +14,21 @@ export interface TypewriterProgress {
   phrase: string;
   phraseIdx: number;
   status: TypewriterStatus;
+  loopsCompleted: number;
 }
 
-export enum TypewriterStatus {
+enum TypewriterStatus {
   WaitingToType = "waitingToType",
   Typing = "typing",
   WaitingToErase = "waitingToErase",
   Erasing = "erasing",
 }
+
 export const defaultTypewriterProgress: TypewriterProgress = {
   phrase: "",
   phraseIdx: 0,
   status: TypewriterStatus.WaitingToType,
+  loopsCompleted: 0,
 };
 
 export const typeNext = (
@@ -33,6 +37,10 @@ export const typeNext = (
   progress: TypewriterProgress,
   onNext: (progress: TypewriterProgress) => void
 ) => {
+  if (typewriter.loopLimit && progress.loopsCompleted >= typewriter.loopLimit) {
+    return () => {};
+  }
+
   const delay = getDelay(typewriter, progress);
 
   const timeoutId = setTimeout(() => {
@@ -47,10 +55,6 @@ const getDelay = (
   { typingSpeed, erasingSpeed }: Typewriter,
   { status }: TypewriterProgress
 ): number => {
-  if (!status) {
-    return typingSpeed.startDelayMs;
-  }
-
   const stateDelays = {
     [TypewriterStatus.WaitingToType]: typingSpeed.startDelayMs,
     [TypewriterStatus.Typing]: typingSpeed.timeMs,
@@ -78,12 +82,20 @@ const getNext = (
       status: eolReached
         ? TypewriterStatus.WaitingToErase
         : TypewriterStatus.Typing,
+      loopsCompleted: progress.loopsCompleted,
     };
   } else if (progress.status === TypewriterStatus.WaitingToErase) {
+    const loopsCompleted =
+      progress.phraseIdx === phrases.length - 1
+        ? progress.loopsCompleted + 1
+        : progress.loopsCompleted;
+    let status = TypewriterStatus.Erasing;
+
     return {
       phrase: progress.phrase,
       phraseIdx: progress.phraseIdx,
-      status: TypewriterStatus.Erasing,
+      status,
+      loopsCompleted,
     };
   } else if (progress.status === TypewriterStatus.Erasing) {
     let phraseIdx = progress.phraseIdx;
@@ -101,11 +113,13 @@ const getNext = (
       status: isFullyErased
         ? TypewriterStatus.WaitingToType
         : TypewriterStatus.Erasing,
+      loopsCompleted: progress.loopsCompleted,
     };
   }
   return {
     phrase: progress.phrase,
     phraseIdx: progress.phraseIdx,
     status: TypewriterStatus.Typing,
+    loopsCompleted: progress.loopsCompleted,
   };
 };

@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "ES6",
     "module": "ESNext",
+    "lib": ["dom", "dom.iterable", "ES6"],
     "jsx": "react",
     "strict": true,
     "moduleResolution": "Node",
@@ -9,7 +10,8 @@
     "declaration": true,
     "sourceMap": true,
     "forceConsistentCasingInFileNames": true,
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "esModuleInterop": true
   },
   "include": ["src/**/*"]
 }

@@ -30,7 +30,7 @@ const useTypewriter = ({ phrases, typewriter }: Props) => {
     );
 
     return () => stop();
-  }, [typewriterProgress]);
+  }, [typewriterProgress, typewriter]);
 
   return { phrase: typewriterProgress.phrase };
 };
