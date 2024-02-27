@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { TypewriterOptions } from "../services/typewriter-service";
+import { TypewriterOptions } from "../services/typewriter";
 import useTypewriter from "../hooks/useTypewriter";
 import "./typewriter.css";
 

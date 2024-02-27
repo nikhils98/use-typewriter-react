@@ -16,5 +16,6 @@
     "declarationDir": "types",
     "emitDeclarationOnly": true
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["src/**/tests"]
 }

@@ -4,7 +4,7 @@ import {
   TypewriterProgress,
   defaultTypewriterProgress,
   typeNext,
-} from "../services/typewriter-service";
+} from "../services/typewriter";
 
 interface Props {
   phrases: string[];

@@ -4,7 +4,7 @@ export interface TypewriterOptions {
   loopLimit?: number;
 }
 
-interface TypewriterSpeed {
+export interface TypewriterSpeed {
   numUnits: number;
   timeMs: number;
   startDelayMs: number;
@@ -17,7 +17,7 @@ export interface TypewriterProgress {
   loopsCompleted: number;
 }
 
-enum TypewriterStatus {
+export enum TypewriterStatus {
   WaitingToType = "waitingToType",
   Typing = "typing",
   WaitingToErase = "waitingToErase",
@@ -70,56 +70,52 @@ const getNext = (
   progress: TypewriterProgress
 ): TypewriterProgress => {
   const fullPhrase = phrases[progress.phraseIdx];
+  let { phrase, phraseIdx, status, loopsCompleted } = progress;
 
-  if (progress.status === TypewriterStatus.Typing) {
-    const startIdx = progress.phrase.length;
-    const endIdx = startIdx + options.typingSpeed.numUnits;
-    const eolReached = endIdx >= fullPhrase.length;
+  switch (progress.status) {
+    case TypewriterStatus.Typing: {
+      const startIdx = progress.phrase.length;
+      const endIdx = startIdx + options.typingSpeed.numUnits;
+      const eolReached = endIdx >= fullPhrase.length;
 
-    return {
-      phrase: fullPhrase.substring(0, endIdx),
-      phraseIdx: progress.phraseIdx,
-      status: eolReached
+      phrase = fullPhrase.substring(0, endIdx);
+      status = eolReached
         ? TypewriterStatus.WaitingToErase
-        : TypewriterStatus.Typing,
-      loopsCompleted: progress.loopsCompleted,
-    };
-  } else if (progress.status === TypewriterStatus.WaitingToErase) {
-    const loopsCompleted =
-      progress.phraseIdx === phrases.length - 1
-        ? progress.loopsCompleted + 1
-        : progress.loopsCompleted;
-    let status = TypewriterStatus.Erasing;
-
-    return {
-      phrase: progress.phrase,
-      phraseIdx: progress.phraseIdx,
-      status,
-      loopsCompleted,
-    };
-  } else if (progress.status === TypewriterStatus.Erasing) {
-    let phraseIdx = progress.phraseIdx;
-    const startIdx = 0;
-    const endIdx = progress.phrase.length - options.erasingSpeed.numUnits;
-    const isFullyErased = endIdx <= 0;
-
-    if (isFullyErased) {
-      phraseIdx = (phraseIdx + 1) % phrases.length;
+        : TypewriterStatus.Typing;
+      break;
     }
+    case TypewriterStatus.WaitingToErase: {
+      loopsCompleted =
+        progress.phraseIdx === phrases.length - 1
+          ? progress.loopsCompleted + 1
+          : progress.loopsCompleted;
+      status = TypewriterStatus.Erasing;
+      break;
+    }
+    case TypewriterStatus.Erasing: {
+      const startIdx = 0;
+      const endIdx = progress.phrase.length - options.erasingSpeed.numUnits;
+      const isFullyErased = endIdx <= 0;
 
-    return {
-      phrase: fullPhrase.substring(startIdx, endIdx),
-      phraseIdx,
-      status: isFullyErased
+      if (isFullyErased) {
+        phraseIdx = (phraseIdx + 1) % phrases.length;
+      }
+
+      phrase = fullPhrase.substring(startIdx, endIdx);
+      status = isFullyErased
         ? TypewriterStatus.WaitingToType
-        : TypewriterStatus.Erasing,
-      loopsCompleted: progress.loopsCompleted,
-    };
+        : TypewriterStatus.Erasing;
+      break;
+    }
+    case TypewriterStatus.WaitingToType:
+      status = TypewriterStatus.Typing;
+      break;
   }
+
   return {
-    phrase: progress.phrase,
-    phraseIdx: progress.phraseIdx,
-    status: TypewriterStatus.Typing,
-    loopsCompleted: progress.loopsCompleted,
+    phrase,
+    phraseIdx,
+    status,
+    loopsCompleted,
   };
 };
