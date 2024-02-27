@@ -1,5 +1,3 @@
-import useTypewriter from "./hooks/useTypewriter";
-import { TypewriterData } from "./domain/typewriter";
-import Typewriter from "./components/Typewriter";
-
-export { useTypewriter, Typewriter, TypewriterData };
+export { default as Typewriter } from "./components/Typewriter";
+export { default as useTypewriter } from "./hooks/useTypewriter";
+export { TypewriterOptions } from "./services/typewriter-service";

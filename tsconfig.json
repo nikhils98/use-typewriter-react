@@ -1,20 +1,20 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "target": "es5",
     "module": "ESNext",
-    "skipLibCheck": true,
-    "jsx": "react",
-    "strict": true,
     "moduleResolution": "Node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react",
     "outDir": "./dist",
-    "declaration": true,
     "sourceMap": true,
+    "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": true,
-    "esModuleInterop": true,
-    "plugins": [{ "name": "typescript-plugin-css-modules" }]
+    "declaration": true,
+    "declarationDir": "types",
+    "emitDeclarationOnly": true
   },
   "include": ["src/**/*"]
 }

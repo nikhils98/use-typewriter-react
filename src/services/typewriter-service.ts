@@ -1,10 +1,10 @@
-export interface TypewriterData {
-  typingSpeed: Speed;
-  erasingSpeed: Speed;
+export interface TypewriterOptions {
+  typingSpeed: TypewriterSpeed;
+  erasingSpeed: TypewriterSpeed;
   loopLimit?: number;
 }
 
-interface Speed {
+interface TypewriterSpeed {
   numUnits: number;
   timeMs: number;
   startDelayMs: number;
@@ -33,18 +33,18 @@ export const defaultTypewriterProgress: TypewriterProgress = {
 
 export const typeNext = (
   phrases: string[],
-  typewriter: TypewriterData,
+  options: TypewriterOptions,
   progress: TypewriterProgress,
   onNext: (progress: TypewriterProgress) => void
 ) => {
-  if (typewriter.loopLimit && progress.loopsCompleted >= typewriter.loopLimit) {
+  if (options.loopLimit && progress.loopsCompleted >= options.loopLimit) {
     return () => {};
   }
 
-  const delay = getDelay(typewriter, progress);
+  const delay = getDelay(options, progress);
 
   const timeoutId = setTimeout(() => {
-    const nextProgress = getNext(phrases, typewriter, progress);
+    const nextProgress = getNext(phrases, options, progress);
     onNext(nextProgress);
   }, delay);
 
@@ -52,7 +52,7 @@ export const typeNext = (
 };
 
 const getDelay = (
-  { typingSpeed, erasingSpeed }: TypewriterData,
+  { typingSpeed, erasingSpeed }: TypewriterOptions,
   { status }: TypewriterProgress
 ): number => {
   const stateDelays = {
@@ -66,14 +66,14 @@ const getDelay = (
 
 const getNext = (
   phrases: string[],
-  typewriter: TypewriterData,
+  options: TypewriterOptions,
   progress: TypewriterProgress
 ): TypewriterProgress => {
   const fullPhrase = phrases[progress.phraseIdx];
 
   if (progress.status === TypewriterStatus.Typing) {
     const startIdx = progress.phrase.length;
-    const endIdx = startIdx + typewriter.typingSpeed.numUnits;
+    const endIdx = startIdx + options.typingSpeed.numUnits;
     const eolReached = endIdx >= fullPhrase.length;
 
     return {
@@ -100,7 +100,7 @@ const getNext = (
   } else if (progress.status === TypewriterStatus.Erasing) {
     let phraseIdx = progress.phraseIdx;
     const startIdx = 0;
-    const endIdx = progress.phrase.length - typewriter.erasingSpeed.numUnits;
+    const endIdx = progress.phrase.length - options.erasingSpeed.numUnits;
     const isFullyErased = endIdx <= 0;
 
     if (isFullyErased) {

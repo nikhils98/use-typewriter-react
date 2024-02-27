@@ -1,34 +1,31 @@
 import React, { ReactNode } from "react";
-import { TypewriterData } from "../domain/typewriter";
+import { TypewriterOptions } from "../services/typewriter-service";
 import useTypewriter from "../hooks/useTypewriter";
-import style from "./typewriter.module.css";
+import "./typewriter.css";
 
 interface Props {
   phrases: string[];
-  typewriterData: TypewriterData;
-  cursor?: "_" | "|";
-  customCursor?: ReactNode;
+  options: TypewriterOptions & {
+    cursor?: "_" | "|";
+    customCursor?: ReactNode;
+  };
 }
 
-const Typewriter = ({
-  phrases,
-  typewriterData,
-  cursor,
-  customCursor,
-}: Props) => {
+const Typewriter = ({ phrases, options }: Props) => {
   const { phrase } = useTypewriter({
     phrases,
-    typewriterData,
+    options,
   });
 
   const getCursor = () => {
+    const { cursor, customCursor } = options;
     if (customCursor) {
       return customCursor;
     }
 
     if (cursor) {
       return cursor === "_" ? (
-        <span className={style["blinking-cursor"]}>_</span>
+        <span className="blinking-cursor">_</span>
       ) : (
         <span className="blinking-cursor blinking-cursor-vertical">|</span>
       );
