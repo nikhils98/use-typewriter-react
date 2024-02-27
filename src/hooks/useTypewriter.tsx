@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import {
   TypewriterOptions,
   TypewriterProgress,
-  defaultTypewriterProgress,
+  initTypewriterProgress,
   typeNext,
 } from "../services/typewriter";
 
@@ -13,7 +13,7 @@ interface Props {
 
 const useTypewriter = ({ phrases, options }: Props) => {
   const [typewriterProgress, setTypewriterProgress] =
-    useState<TypewriterProgress>(defaultTypewriterProgress);
+    useState<TypewriterProgress>(initTypewriterProgress);
 
   useEffect(() => {
     if (!phrases.length) {

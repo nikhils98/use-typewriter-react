@@ -24,7 +24,7 @@ export enum TypewriterStatus {
   Erasing = "erasing",
 }
 
-export const defaultTypewriterProgress: TypewriterProgress = {
+export const initTypewriterProgress: TypewriterProgress = {
   phrase: "",
   phraseIdx: 0,
   status: TypewriterStatus.WaitingToType,
