@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 import {
-  Typewriter,
+  TypewriterData,
   TypewriterProgress,
   defaultTypewriterProgress,
   typeNext,
-} from "./typewriter";
+} from "../domain/typewriter";
 
 interface Props {
   phrases: string[];
-  typewriter: Typewriter;
+  typewriterData: TypewriterData;
 }
 
-const useTypewriter = ({ phrases, typewriter }: Props) => {
+const useTypewriter = ({ phrases, typewriterData }: Props) => {
   const [typewriterProgress, setTypewriterProgress] =
     useState<TypewriterProgress>(defaultTypewriterProgress);
 
@@ -22,7 +22,7 @@ const useTypewriter = ({ phrases, typewriter }: Props) => {
 
     const stop = typeNext(
       phrases,
-      typewriter,
+      typewriterData,
       typewriterProgress,
       (progress) => {
         setTypewriterProgress(progress);
@@ -30,7 +30,7 @@ const useTypewriter = ({ phrases, typewriter }: Props) => {
     );
 
     return () => stop();
-  }, [typewriterProgress, typewriter]);
+  }, [typewriterProgress, typewriterData]);
 
   return { phrase: typewriterProgress.phrase };
 };

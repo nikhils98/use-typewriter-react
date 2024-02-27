@@ -1,0 +1,14 @@
+.blinking-cursor {
+  display: inline-block;
+  animation: blinker 1s step-start infinite;
+}
+
+.blinking-cursor-vertical {
+  transform: translateY(-0.08em);
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}

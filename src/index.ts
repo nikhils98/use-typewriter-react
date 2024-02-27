@@ -1,4 +1,5 @@
-import useTypewriter from "./useTypewriter";
-import { Typewriter } from "./typewriter";
+import useTypewriter from "./hooks/useTypewriter";
+import { TypewriterData } from "./domain/typewriter";
+import Typewriter from "./components/Typewriter";
 
-export { useTypewriter, Typewriter };
+export { useTypewriter, Typewriter, TypewriterData };

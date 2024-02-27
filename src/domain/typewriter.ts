@@ -1,4 +1,4 @@
-export interface Typewriter {
+export interface TypewriterData {
   typingSpeed: Speed;
   erasingSpeed: Speed;
   loopLimit?: number;
@@ -33,7 +33,7 @@ export const defaultTypewriterProgress: TypewriterProgress = {
 
 export const typeNext = (
   phrases: string[],
-  typewriter: Typewriter,
+  typewriter: TypewriterData,
   progress: TypewriterProgress,
   onNext: (progress: TypewriterProgress) => void
 ) => {
@@ -52,7 +52,7 @@ export const typeNext = (
 };
 
 const getDelay = (
-  { typingSpeed, erasingSpeed }: Typewriter,
+  { typingSpeed, erasingSpeed }: TypewriterData,
   { status }: TypewriterProgress
 ): number => {
   const stateDelays = {
@@ -66,7 +66,7 @@ const getDelay = (
 
 const getNext = (
   phrases: string[],
-  typewriter: Typewriter,
+  typewriter: TypewriterData,
   progress: TypewriterProgress
 ): TypewriterProgress => {
   const fullPhrase = phrases[progress.phraseIdx];
